@@ -36,13 +36,14 @@ public class AuthService {
 
         Map<String, Object> loginResultMap = new HashMap<>();
 
-        if (peerEvaluationUser.getRoles().equals("student")) {
+        String roles = peerEvaluationUser.getRoles();
+        if ("student".equals(roles)) {
             StudentDto studentDto = this.studentToStudentDtoConverter.convert((Student) peerEvaluationUser);
             // Create a JWT.
             String token = this.jwtProvider.createToken(authentication);
             loginResultMap.put("userInfo", studentDto);
             loginResultMap.put("token", token);
-        } else if (peerEvaluationUser.getRoles().contains("instructor")) {
+        } else if (roles != null && roles.contains("instructor")) {
             InstructorDto instructorDto = this.instructorToInstructorDtoConverter.convert((Instructor) peerEvaluationUser);
             // Create a JWT.
             String token = this.jwtProvider.createToken(authentication);
