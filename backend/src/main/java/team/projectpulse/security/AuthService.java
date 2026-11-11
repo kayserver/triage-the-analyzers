@@ -9,6 +9,7 @@ import team.projectpulse.student.dto.StudentDto;
 import team.projectpulse.user.MyUserPrincipal;
 import team.projectpulse.user.PeerEvaluationUser;
 import org.springframework.security.core.Authentication;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -29,6 +30,11 @@ public class AuthService {
         this.instructorToInstructorDtoConverter = instructorToInstructorDtoConverter;
     }
 
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Only called from AuthController.getLoginInfo (POST /users/login), which "
+                    + "SecurityConfiguration requires to be authenticated(), so Spring always sets the "
+                    + "principal to a MyUserPrincipal. Recheck if another caller is added.")
     public Map<String, Object> createLoginInfo(Authentication authentication) {
         // Create user info.
         MyUserPrincipal principal = (MyUserPrincipal) authentication.getPrincipal();
