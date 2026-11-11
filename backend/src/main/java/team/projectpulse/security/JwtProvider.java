@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -22,6 +23,11 @@ public class JwtProvider {
         this.jwtEncoder = jwtEncoder;
     }
 
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Only called from AuthService.createLoginInfo, which has already dereferenced "
+                    + "this same principal and is itself only reached through the authenticated "
+                    + "POST /users/login. Recheck if another caller is added.")
     public String createToken(Authentication authentication) {
         Instant now = Instant.now();
         long expiresIn = 2; // 2 hours
