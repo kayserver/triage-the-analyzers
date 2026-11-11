@@ -7,4 +7,22 @@
 
      Unlike the baseline, this file may grow, but every entry is a reviewed decision. -->
 <FindBugsFilter>
+
+  <!-- D1: EI_EXPOSE_REP and EI_EXPOSE_REP2 are off for the whole project.
+       All 219 findings on 2026-11-01 were in designs where sharing a mutable object is deliberate:
+       - 152 in JPA entities, plus 6 in MyUserPrincipal, ReminderService.ReminderResult and
+         WeeklyPeerEvaluationReport, which wrap or report on entities. Hibernate tracks changes
+         through the collection or association the entity holds, and services edit entities
+         through their getters, so defensive copies would change behavior
+         (see PeerEvaluation.getRatings / setRatings).
+       - 27 in Spring bean constructors: controllers and services keep the beans Spring injects.
+         That is dependency injection, not a leak.
+       - 34 in DTO records: built per request by a converter, serialized to JSON, then discarded.
+       Narrowing was considered and rejected: the code is packaged by feature, not by layer, so no
+       package or name pattern separates these kinds of class.
+       Revisit if Project Pulse adds value objects or a library API that outside code holds on to. -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
+
 </FindBugsFilter>
