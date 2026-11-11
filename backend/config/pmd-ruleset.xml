@@ -16,6 +16,11 @@
         <!-- D2: re-added below, narrowed to classes that are not JPA entities. -->
         <exclude name="UncommentedEmptyConstructor"/>
         <exclude name="UnnecessaryConstructor"/>
+        <!-- D4: GuardLogStatement is off. All 4 findings on 2026-11-01 passed only cheap getters or
+             size calls as arguments, and SLF4J placeholders already skip building the message when the
+             level is off. Three were error or info calls, which are on in production, so a guard would
+             always be true. Revisit if a log argument becomes expensive, such as serializing an object. -->
+        <exclude name="GuardLogStatement"/>
     </rule>
 
     <!-- D2: UncommentedEmptyConstructor and UnnecessaryConstructor are off for @Entity classes and
