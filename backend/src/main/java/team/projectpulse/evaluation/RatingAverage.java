@@ -7,6 +7,7 @@ public class RatingAverage {
 
 
     public RatingAverage() {
+        // Not called directly; kept so JSON libraries such as Jackson can create one reflectively.
     }
 
     public RatingAverage(Integer criterionId, Double averageScore) {
