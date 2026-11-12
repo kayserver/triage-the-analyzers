@@ -16,6 +16,7 @@ public class Result {
 
 
     public Result() {
+        // Not called directly; kept so JSON libraries such as Jackson can create one reflectively.
     }
 
     public Result(boolean flag, Integer code, String message) {

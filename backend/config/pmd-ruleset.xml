@@ -13,5 +13,33 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>PMD quickstart, with Project Pulse's decisions.</description>
     <rule ref="rulesets/java/quickstart.xml">
+        <!-- D2: re-added below, narrowed to classes that are not JPA entities. -->
+        <exclude name="UncommentedEmptyConstructor"/>
+        <exclude name="UnnecessaryConstructor"/>
+        <!-- D4: GuardLogStatement is off. All 4 findings on 2026-11-01 passed only cheap getters or
+             size calls as arguments, and SLF4J placeholders already skip building the message when the
+             level is off. Three were error or info calls, which are on in production, so a guard would
+             always be true. Revisit if a log argument becomes expensive, such as serializing an object. -->
+        <exclude name="GuardLogStatement"/>
+    </rule>
+
+    <!-- D2: UncommentedEmptyConstructor and UnnecessaryConstructor are off for @Entity classes and
+         enforced everywhere else. 34 of the 40 findings on 2026-11-01 were in JPA entities, which
+         must have a no-argument constructor for Hibernate to build them from rows. There, @Entity
+         on the class already says why the body is empty, and UnnecessaryConstructor's fix (delete
+         it) is harmful: once someone adds a constructor with parameters, Java stops generating the
+         no-argument one and Hibernate fails at runtime, not at compile time. The other 6 findings,
+         in four plain data classes, were fixed instead. -->
+    <rule ref="category/java/documentation.xml/UncommentedEmptyConstructor">
+        <properties>
+            <property name="violationSuppressXPath"
+                      value="ancestor-or-self::ClassDeclaration[1]/ModifierList/Annotation[@SimpleName='Entity']"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/UnnecessaryConstructor">
+        <properties>
+            <property name="violationSuppressXPath"
+                      value="ancestor-or-self::ClassDeclaration[1]/ModifierList/Annotation[@SimpleName='Entity']"/>
+        </properties>
     </rule>
 </ruleset>
